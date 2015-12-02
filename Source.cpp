@@ -119,8 +119,8 @@ inline int Stack<T>::getTop() const
 	return top;
 }
 
-int table(char first,char second) // 1st - на стрелке(горизонталь)
-								  // 2nd - прошлый который ушел в Москву(вертикаль)
+int table(char first, char second) // 1st - на стрелке(горизонталь)
+								   // 2nd - прошлый который ушел в Москву(вертикаль)
 {
 	char massivGOR[7];
 	char massivVERT[6];
@@ -133,7 +133,7 @@ int table(char first,char second) // 1st - на стрелке(горизонталь)
 	massivGOR[5] = massivVERT[5] = '(';
 	massivGOR[6] = ')';
 
- 
+
 	int massiv[6][7];
 	int bufGOR, bufVERT;
 	////////////////////////////////////////////////////////заполнение массива
@@ -166,8 +166,8 @@ int table(char first,char second) // 1st - на стрелке(горизонталь)
 	massiv[5][0] = 5;
 	massiv[5][6] = 3;
 	//////////////////////////////////////////////////////////
-	
-	
+
+
 	//определение ситуации
 	for (int j = 0; j < 7; j++)
 	{
@@ -185,54 +185,97 @@ string convert(string str)
 {
 	string converted;
 	Stack<char> stackSymbol(30);
-	int i = 0 , flag = 0;
-	char last = str.at(0);
-	while (i < str.length()) 
+	int i = 0;
+	stackSymbol.push('|');
+	char last = stackSymbol.Peek(1);
+	while (i < str.length())
 	{
-		if (isdigit(str.at(i)) != 0) converted += str.at(i);			// если у нас цифра , то сразу записываем её в Киев
-		else		
-		{		
-			if (table(str.at(i), last) == 1)
+		if (isdigit(str.at(i)) != 0) 
+		{ 
+			converted += str.at(i);
+			converted += ' ';
+		}
+		else
+		{
+			switch (table(str.at(i), last))
+			{
+			case 1:
 			{
 				stackSymbol.push(str.at(i));
 				last = stackSymbol.Peek(1);
-				flag = 1;
+				break;
 			}
-			if (table(str.at(i), last) == 2 && (flag != 1))
+			case 2:
+			{											//////////////////////////////////БУДЕТ ВАЙЛ 
+				while (table(str.at(i), last) == 2)
 				{
 					converted += stackSymbol.Peek(1);
+					converted += ' ';
 					stackSymbol.pop();
 					last = stackSymbol.Peek(1);
 				}
-			if (table(str.at(i), last) == 3) 
+
+				if (table(str.at(i), stackSymbol.Peek(1)) == 3)
 				{
 					stackSymbol.pop();
-					if (stackSymbol.getTop() > 0)
-						last = stackSymbol.Peek(1);
+					last = stackSymbol.Peek(1);
 				}
-			if (table(str.at(i), last) == 4) break; 
-			if (table(str.at(i), last) == 5) exit; // error
+				
+				break;
+			}
+			case 3:
+			{
+				stackSymbol.pop();
+				break;
+			}
+			case 4:
+				return converted;
+			case 5:
+				return "error in formula";
+			default:
+				return "error in table";
+			}
 		}
-		flag = 0;
 		i++;
 	}
-	while(stackSymbol.getTop()>0)
+	while (stackSymbol.getTop() != 0)
 	{
 		converted += stackSymbol.Peek(1);
 		stackSymbol.pop();
+		converted += ' ';
 	}
 	return converted;
 };
 
+double count(string converted)
+{
+	double result = 0;
+	Stack<double> stackSymbol(30);
+	for (int i = 0; i < converted.length(); i++)
+	{
+
+
+
+
+
+
+
+
+
+	}
+	return stackSymbol.Peek(1);
+}
 
 void main()
 {
 	setlocale(LC_ALL, "");
-	string str;
-	double result = 0;
+	string str, converted;
 	cout << "Введите строку для вычисления : ";
 	cin >> str;
 	cout << endl << endl << "Строка в инфиксной нотации : " << str << endl << endl;
 
-	cout << endl << "Строка в постфиксной нотации : " << convert(str) << endl << endl << endl << endl;
+	converted = convert(str);
+	cout << endl << "Строка в постфиксной нотации : " << converted << endl << endl << endl << endl;
+
+	//cout << endl << "Результат вычисления : " << count(converted) << endl << endl << endl << endl;
 }
