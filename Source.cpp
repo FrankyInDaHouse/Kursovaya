@@ -1,3 +1,18 @@
+/****************************************************************************
+
+ModuleName:
+Source.cpp
+
+Abstract:
+This code demonstrates calculating with reverse polish notation method.
+
+Author:
+Cherednikov Michael
+
+Date:
+2015-12-03
+
+****************************************************************************/
 #include <cassert> // для assert
 #include <iostream>
 #include <iomanip> // для setw
@@ -190,9 +205,14 @@ string convert(string str)
 	char last = stackSymbol.Peek(1);
 	while (i < str.length())
 	{
-		if (isdigit(str.at(i)) != 0) 
-		{ 
-			converted += str.at(i);
+		if (isdigit(str.at(i)) != 0)
+		{
+			while ((i<str.length()) && ((isdigit(str.at(i)) != 0) || (str.at(i) == '.')))
+			{
+				converted += str.at(i);
+				i++;
+			}
+			i--;
 			converted += ' ';
 		}
 		else
@@ -220,6 +240,12 @@ string convert(string str)
 					stackSymbol.pop();
 					last = stackSymbol.Peek(1);
 				}
+
+				if (table(str.at(i), stackSymbol.Peek(1)) == 1)
+				{
+					stackSymbol.push(str.at(i));
+					last = stackSymbol.Peek(1);
+				}
 				
 				break;
 			}
@@ -231,9 +257,9 @@ string convert(string str)
 			case 4:
 				return converted;
 			case 5:
-				return "error in formula";
+				throw "ERROR in formula";
 			default:
-				return "error in table";
+				throw "ERROR in table";
 			}
 		}
 		i++;
@@ -247,35 +273,119 @@ string convert(string str)
 	return converted;
 };
 
+double converttod(string input)
+{
+	double full = 0;
+	double fact = 0;
+	double conv = 0;
+	string subfull;
+	string subfact;
+	int i = 0;
+	bool FLAGdrobn = false;
+
+	while (i < input.length())
+	{
+		if (input.at(i) == '.') FLAGdrobn = true;
+		i++;
+	}
+	i = 0;
+	if (FLAGdrobn)
+	{
+		while (input.at(i) != '.')
+		{
+			subfull += input.at(i);
+			i++;
+		}
+		full = stod(subfull);
+		i++;
+
+		while (i < input.length())
+		{
+			subfact += input.at(i);
+			i++;
+		}
+		fact = stod(subfact);
+		fact = fact / (subfact.length() * 10);
+
+		conv = full + fact;
+	} 
+	else
+	{
+		while (i < input.length())
+		{
+			subfull += input.at(i);
+			i++;
+		}
+		conv = stod(subfull);
+	}
+	return conv;
+}
+
 double count(string converted)
 {
 	double result = 0;
-	Stack<double> stackSymbol(30);
+	Stack<double> stackNumber(30);
+	string substring;
+
 	for (int i = 0; i < converted.length(); i++)
 	{
+		if (isdigit(converted.at(i)) != 0) 
+		{
+			while ((i<converted.length()) && ((isdigit(converted.at(i)) != 0) || (converted.at(i) == '.')))
+			{ 
+				substring += converted.at(i);
+				i++;
+			}
+			i--;
+			stackNumber.push(converttod(substring));
+			substring = "";
+		}
 
-
-
-
-
-
-
-
-
+		else if ((converted.at(i) != ' ') && (converted.at(i) != '|'))
+		{
+			double a = stackNumber.Peek(1);
+			stackNumber.pop();
+			double b = stackNumber.Peek(1);
+			stackNumber.pop();
+			switch (converted.at(i))
+			{
+				case '+': 
+				{
+					result = b + a;
+					break;
+				}
+				case '-': 
+				{ 
+					result = b - a; 
+					break;
+				}
+			case '*': 
+				{
+					result = b*a; 
+					break;
+				}
+			case '/': 
+				{
+					result = b / a;
+					break;
+				}
+			}
+			stackNumber.push(result);
+		}
 	}
-	return stackSymbol.Peek(1);
+	return stackNumber.Peek(1);
 }
 
 void main()
 {
 	setlocale(LC_ALL, "");
 	string str, converted;
-	cout << "Введите строку для вычисления : ";
+	cout << "Enter string : ";
 	cin >> str;
-	cout << endl << endl << "Строка в инфиксной нотации : " << str << endl << endl;
+	cout << endl << endl << "Infix notation : " << str << endl << endl;
 
 	converted = convert(str);
-	cout << endl << "Строка в постфиксной нотации : " << converted << endl << endl << endl << endl;
+	cout << endl << "Reverse polish notation : " << converted << endl << endl << endl << endl;
 
-	//cout << endl << "Результат вычисления : " << count(converted) << endl << endl << endl << endl;
+	cout << endl << "Result : " << count(converted) << endl << endl << endl << endl;
 }
