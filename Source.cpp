@@ -137,32 +137,23 @@ inline int Stack<T>::getTop() const
 int table(char first, char second) // 1st - на стрелке(горизонталь)
 								   // 2nd - прошлый который ушел в Москву(вертикаль)
 {
-	char massivGOR[7];
-	char massivVERT[6];
+	char massivGOR[11];
+	char massivVERT[10];
 
-	massivGOR[0] = massivVERT[0] = '|';
-	massivGOR[1] = massivVERT[1] = '+';
-	massivGOR[2] = massivVERT[2] = '-';
-	massivGOR[3] = massivVERT[3] = '*';
-	massivGOR[4] = massivVERT[4] = '/';
-	massivGOR[5] = massivVERT[5] = '(';
-	massivGOR[6] = ')';
-
-
-	int massiv[6][7];
+	int massiv[10][11];
 	int bufGOR, bufVERT;
 	////////////////////////////////////////////////////////заполнение массива
-	for (int i = 0; i < 6; i++)
-		for (int j = 0; j < 7; j++)
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 11; j++)
 		{
 			massiv[i][j] = 2;
 		}
-	massiv[0][0] = 4;
+	}
 	for (int j = 1; j < 6; j++)
 	{
 		massiv[0][j] = 1;
 	}
-	massiv[0][6] = 5;
 	for (int j = 3; j < 6; j++)
 	{
 		massiv[1][j] = 1;
@@ -173,23 +164,42 @@ int table(char first, char second) // 1st - на стрелке(горизонталь)
 	}
 	massiv[3][5] = 1;
 	massiv[4][5] = 1;
-
-	for (int j = 0; j < 7; j++)
+	for (int j = 1; j < 6; j++)
 	{
-		massiv[5][j] = 1;
+		massiv[9][j] = 1;
 	}
-	massiv[5][0] = 5;
-	massiv[5][6] = 3;
+	for (int i = 0; i < 10; i++)
+	{
+		massiv[i][9] = 1;
+	}
+	for (int i = 1; i < 5; i++)
+	{
+		massiv[i][10] = 2;
+	}
+	massiv[0][0] = 4;
+	massiv[9][0] = massiv[0][10] = 5;
+	massiv[9][10] = 3;
+	massiv[9][9] = 1;
 	//////////////////////////////////////////////////////////
-
+	massivGOR[0] = massivVERT[0] = '|';
+	massivGOR[1] = massivVERT[1] = '+';
+	massivGOR[2] = massivVERT[2] = '-';
+	massivGOR[3] = massivVERT[3] = '*';
+	massivGOR[4] = massivVERT[4] = '/';
+	massivGOR[5] = massivVERT[5] = '^';
+	massivGOR[6] = massivVERT[6] = 's';
+	massivGOR[7] = massivVERT[7] = 'c';
+	massivGOR[8] = massivVERT[8] = 'I';
+	massivGOR[9] = massivVERT[9] = '(';
+	massivGOR[10] = ')';
 
 	//определение ситуации
-	for (int j = 0; j < 7; j++)
+	for (int j = 0; j < 11; j++)
 	{
 		if (first == massivGOR[j]) bufGOR = j;
 	}
 	//определение ситуации
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		if (second == massivVERT[i]) bufVERT = i;
 	}
@@ -206,11 +216,24 @@ string convert(string str)
 	while (i < str.length())
 	{
 		if (isdigit(str.at(i)) != 0)
-		{
-			while ((i<str.length()) && ((isdigit(str.at(i)) != 0) || (str.at(i) == '.')))
+		{	
+			if ((i != 0)&&(str.at(i - 1) == '-'))
 			{
-				converted += str.at(i);
-				i++;
+				converted += '0';
+				converted += ' ';
+				while ((i < str.length()) && ((isdigit(str.at(i)) != 0) || (str.at(i) == '.')))
+				{
+					converted += str.at(i);
+					i++;
+				}
+			}
+			else
+			{
+				while ((i < str.length()) && ((isdigit(str.at(i)) != 0) || (str.at(i) == '.')))
+				{
+					converted += str.at(i);
+					i++;
+				}
 			}
 			i--;
 			converted += ' ';
@@ -367,6 +390,11 @@ double count(string converted)
 			case '/': 
 				{
 					result = b / a;
+					break;
+				}
+			case '^':
+				{
+					result = pow(b, a);
 					break;
 				}
 			}
