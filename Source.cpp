@@ -150,36 +150,52 @@ int table(char first, char second) // 1st - на стрелке(горизонталь)
 			massiv[i][j] = 2;
 		}
 	}
-	for (int j = 1; j < 6; j++)
+	for (int j = 1; j < 10; j++)
 	{
 		massiv[0][j] = 1;
 	}
-	for (int j = 3; j < 6; j++)
+	for (int j = 3; j < 10; j++)
 	{
 		massiv[1][j] = 1;
 	}
-	for (int j = 3; j < 6; j++)
+	for (int j = 3; j < 10; j++)
 	{
 		massiv[2][j] = 1;
 	}
-	massiv[3][5] = 1;
-	massiv[4][5] = 1;
-	for (int j = 1; j < 6; j++)
+	for (int j = 5; j < 10; j++)
+	{
+		massiv[3][j] = 1;
+	}
+	for (int j = 5; j < 10; j++)
+	{
+		massiv[4][j] = 1;
+	}
+	for (int j = 6; j < 10; j++)
+	{
+		massiv[5][j] = 1;
+	}
+	for (int j = 7; j < 10; j++)
+	{
+		massiv[6][j] = 1;
+	}
+	for (int j = 8; j < 10; j++)
+	{
+		massiv[7][j] = 1;
+	}
+	massiv[8][9] = 1;
+
+	for (int j = 1; j < 10; j++)
 	{
 		massiv[9][j] = 1;
 	}
-	for (int i = 0; i < 10; i++)
-	{
-		massiv[i][9] = 1;
-	}
-	for (int i = 1; i < 5; i++)
-	{
-		massiv[i][10] = 2;
-	}
+
+
+
 	massiv[0][0] = 4;
 	massiv[9][0] = massiv[0][10] = 5;
 	massiv[9][10] = 3;
 	massiv[9][9] = 1;
+
 	//////////////////////////////////////////////////////////
 	massivGOR[0] = massivVERT[0] = '|';
 	massivGOR[1] = massivVERT[1] = '+';
@@ -275,6 +291,7 @@ string convert(string str)
 			case 3:
 			{
 				stackSymbol.pop();
+				last = stackSymbol.Peek(1);
 				break;
 			}
 			case 4:
@@ -328,7 +345,7 @@ double converttod(string input)
 			i++;
 		}
 		fact = stod(subfact);
-		fact = fact / (subfact.length() * 10);
+		fact = fact / (pow(10,subfact.length()));
 
 		conv = full + fact;
 	} 
@@ -346,7 +363,7 @@ double converttod(string input)
 
 double count(string converted)
 {
-	double result = 0;
+	double result = 0,a = 0,b = 0;
 	Stack<double> stackNumber(30);
 	string substring;
 
@@ -366,37 +383,74 @@ double count(string converted)
 
 		else if ((converted.at(i) != ' ') && (converted.at(i) != '|'))
 		{
-			double a = stackNumber.Peek(1);
+			/*a = stackNumber.Peek(1);
 			stackNumber.pop();
-			double b = stackNumber.Peek(1);
-			stackNumber.pop();
+			if (stackNumber.getTop() >= 1) 
+			{
+				b = stackNumber.Peek(1);
+				stackNumber.pop();
+			}*/
 			switch (converted.at(i))
 			{
 				case '+': 
 				{
+					a = stackNumber.Peek(1);
+					stackNumber.pop();
+					b = stackNumber.Peek(1);
+					stackNumber.pop();
 					result = b + a;
 					break;
 				}
 				case '-': 
 				{ 
+					a = stackNumber.Peek(1);
+					stackNumber.pop();
+					b = stackNumber.Peek(1);
+					stackNumber.pop();
 					result = b - a; 
 					break;
 				}
 			case '*': 
 				{
+					a = stackNumber.Peek(1);
+					stackNumber.pop();
+					b = stackNumber.Peek(1);
+					stackNumber.pop();
 					result = b*a; 
 					break;
 				}
 			case '/': 
 				{
+					a = stackNumber.Peek(1);
+					stackNumber.pop();
+					b = stackNumber.Peek(1);
+					stackNumber.pop();
 					result = b / a;
 					break;
 				}
 			case '^':
 				{
+					a = stackNumber.Peek(1);
+					stackNumber.pop();
+					b = stackNumber.Peek(1);
+					stackNumber.pop();
 					result = pow(b, a);
 					break;
 				}
+			case 's':
+				{
+					a = stackNumber.Peek(1);
+					stackNumber.pop();
+					result = sin(a);
+					break;
+				}
+			case 'c':
+			{
+				a = stackNumber.Peek(1);
+				stackNumber.pop();
+				result = cos(a);
+				break;
+			}
 			}
 			stackNumber.push(result);
 		}
