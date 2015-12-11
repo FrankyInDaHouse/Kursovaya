@@ -100,9 +100,10 @@ template <class T>
 inline const T &Stack<T>::Peek(int nom) const
 {
 	//
-	assert(nom <= top);
 
+	assert(nom <= top);
 	return stackPtr[top - nom]; // вернуть n-й элемент стека
+	
 }
 
 // вывод стека на экран
@@ -297,9 +298,9 @@ string convert(string str)
 			case 4:
 				return converted;
 			case 5:
-				throw "ERROR in formula";
+				throw "Check brackets";
 			default:
-				throw "ERROR in table";
+				throw "Error in table";
 			}
 		}
 		i++;
@@ -458,16 +459,80 @@ double count(string converted)
 	return stackNumber.Peek(1);
 }
 
+bool IIF(string str)
+{
+	int i = 4;
+	double left_part = 0,right_part = 0;
+	string left, right;
+	char znak;
+	while ((str.at(i) != '<') && (str.at(i) != '>') && (str.at(i) != '='))
+	{
+		left += str.at(i);
+		i++;
+	}
+
+	znak = str.at(i);
+	i++;
+
+	while (i!=str.length()-1)
+	{
+		right += str.at(i);
+		i++;
+	}
+	left_part = count(convert(left));
+	right_part = count(convert(right));
+	
+	switch (znak)
+	{
+	case '<':
+	{
+		if ((right_part - left_part) > 0) return true;
+		else 
+			return false;
+		break;
+	}
+	case '>':
+	{
+		if ((left_part - right_part) > 0) return true;
+		else
+			return false;
+		break;
+	}
+	case '=':
+	{
+		if ((right_part - left_part) == 0) return true;
+		else
+			return false;
+		break;
+	}
+	default:
+		break;
+	}
+}
+
 void main()
 {
 	setlocale(LC_ALL, "");
 	string str, converted;
 	cout << "Enter string : ";
 	cin >> str;
-	cout << endl << endl << "Infix notation : " << str << endl << endl;
-
-	converted = convert(str);
-	cout << endl << "Reverse polish notation : " << converted << endl << endl << endl << endl;
-
-	cout << endl << "Result : " << count(converted) << endl << endl << endl << endl;
+	if (str.at(0) != 'I')
+	{
+		cout << endl << endl << "Infix notation : " << str << endl << endl;
+		try
+		{
+			converted = convert(str);
+			cout << endl << "Reverse polish notation : " << converted << endl << endl << endl;
+			cout << endl << "Result : " << count(converted) << endl << endl << endl << endl;
+		}
+		catch (...)
+		{
+			cout << "Error in formula" << endl << endl << endl;
+		}
+	}
+	else
+	{
+		if (IIF(str)) cout << endl << "TRUE" << endl << endl;
+		else cout << endl << "FALSE" << endl << endl;
+	}
 }
